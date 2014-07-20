@@ -18,7 +18,7 @@
 # 
 #   This program is distributed in the hope that it will be useful,
 #   but WITHOUT ANY WARRANTY; without even the implied warranty of
-#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   MERCHANTABILITY || FITNESS FOR A PARTICULAR PURPOSE.  See the
 #   GNU General Public License for more details.
 # 
 #   You should have received a copy of the GNU General Public License
@@ -86,11 +86,11 @@ EIBConnection.prototype.EIBSocketRemote = function(host, port = 6720) {
 }
 
 EIBConnection.prototype.EIBSocketURL = function(url) {
-    if (url[0:6] == 'local:') {
-      return this.EIBSocketLocal(url[6:])
-    if (url[0:3] == 'ip:') {
+    if (url.slice(0,6) == 'local:') {
+      return this.EIBSocketLocal(url.slice(6))
+    if (url.slice(0,3) == 'ip:') {
       parts=url.split(':')
-      if (len(parts) == 2) {
+      if (parts.length == 2) {
         parts.append(6720)
       return this.EIBSocketRemote(parts[1], int(parts[2]))
     this.errno = errno.EINVAL
@@ -126,10 +126,10 @@ EIBConnection.prototype.__EIB_SendRequest = function(data) {
     if (this.fd == null) {
       this.errno = errno.ECONNRESET
       return -1
-    if (len(data) < 2 or len(data) > 0xffff) {
+    if (data.length < 2 || data.length > 0xffff) {
       this.errno = errno.EINVAL
       return -1
-    data = [ (len(data)>>8)&0xff, (len(data))&0xff ] + data;
+    data = [ (data.length>>8)&0xff, (data.length)&0xff ] + data;
     result = '';
     for (i in data)       result += chr(i);
     this.fd.send(result);
@@ -147,7 +147,7 @@ EIBConnection.prototype.EIB_Poll_FD = function() {
 
 EIBConnection.prototype.EIB_Poll_Complete = function() {
     if (this.__EIB_CheckRequest(False) == -1)  return -1;
-    if (this.readlen < 2 or (this.readlen >= 2 & this.readlen < this.datalen + 2)) return 0;
+    if (this.readlen < 2 || (this.readlen >= 2 & this.readlen < this.datalen + 2)) return 0;
     return 1;
 }
 
@@ -165,28 +165,28 @@ EIBConnection.prototype.__EIB_GetRequest = function() {
 
 EIBConnection.prototype.__EIB_CheckRequest = function(block) {
     if (this.fd == null) {
-      this.errno = errno.ECONNRESET
-      return -1
+      this.errno = errno.ECONNRESET;
+      return -1;
     }
     if (this.readlen == 0) {
-      this.head = []
-      this.data = []
+      this.head = [];
+      this.data = [];
     }
     if (this.readlen < 2) {
-      this.fd.setblocking(block)
-      result = this.fd.recv (2-this.readlen)
+      this.fd.setblocking(block);
+      result = this.fd.recv (2-this.readlen);
       for (a in result)         this.head.append(ord(a))
-      this.readlen += len(result)
+      this.readlen += result.length
     }
     if (this.readlen < 2) {
       return 0;
     }
-    this.datalen = (this.head[0] << 8) | this.head[1]);
+    this.datalen = ((this.head[0] << 8) | this.head[1]);
     if (this.readlen < this.datalen + 2) {
       this.fd.setblocking(block);
-      result = this.fd.recv (this.datalen + 2 -this.readlen)
-      for (a in result)         this.data.append(ord(a))
-      this.readlen += len(result);
+      result = this.fd.recv (this.datalen + 2 -this.readlen);
+      for (a in result)         this.data.append(ord(a));
+      this.readlen += result.length;
     }
     return 0;
 }

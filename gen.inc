@@ -1,17 +1,17 @@
 EIBConnection.prototype.__EIBGetAPDU_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 37 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 37 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
     }
-    this.buf.buffer = this.data[2:]
+    this.buf.buffer = this.data.slice(2)
     return this.buf.buffer.length
 }
 
 EIBConnection.prototype.EIBGetAPDU_async = function( buf) {
     ibuf = [0] * 2;
-    this.buf = buf
+    this.buf = buf;
     this.__complete = this.__EIBGetAPDU_Complete;
     return 0
 }
@@ -20,21 +20,20 @@ EIBConnection.prototype.EIBGetAPDU = function( buf) {
     if(this.EIBGetAPDU_async (buf) == -1) {
       return (-1);
     }
-    return this.EIBComplete ()
-
+    return this.EIBComplete();
 }
 
 EIBConnection.prototype.__EIBGetAPDU_Src_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 37 or this.data.length < 4 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 37 || this.data.length < 4 ) {
       this.errno = errno.ECONNRESET
       return (-1);
     }
-    if(this.ptr5 != None {
+    if(this.ptr5 != null) {
       this.ptr5.data = (((this.data[2])<<8)|(this.data[2+1]))
     }
-    this.buf.buffer = this.data[4:]
+    this.buf.buffer = this.data.slice(4);
     return this.buf.buffer.length
 }
 
@@ -54,13 +53,13 @@ EIBConnection.prototype.EIBGetAPDU_Src = function( buf, src) {
 }
 
 EIBConnection.prototype.__EIBGetBusmonitorPacket_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 20 or this.data.length < 2 {
-      this.errno = errno.ECONNRESET
+    if ((((this.data[0])<<8)|(this.data[0+1])) != 20 || this.data.length < 2) {
+      this.errno = errno.ECONNRESET;
       return (-1);
     }
-    this.buf.buffer = this.data[2:]
+    this.buf.buffer = this.data.slice(2);
     return this.buf.buffer.length;
 }
 
@@ -81,16 +80,16 @@ EIBConnection.prototype.EIBGetBusmonitorPacket = function( buf) {
 }
 
 EIBConnection.prototype.__EIBGetGroup_Src_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 39 or this.data.length < 6 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 39 || this.data.length < 6) {
       this.errno = errno.ECONNRESET
       return (-1);
-    if(this.ptr5 != None {
+    if(this.ptr5 != null) {
       this.ptr5.data = (((this.data[2])<<8)|(this.data[2+1]))
-    if(this.ptr6 != None {
+    if(this.ptr6 != null) {
       this.ptr6.data = (((this.data[4])<<8)|(this.data[4+1]))
-    this.buf.buffer = this.data[6:]
+    this.buf.buffer = this.data.slice(6)
     return this.buf.buffer.length
 
 
@@ -115,14 +114,14 @@ EIBConnection.prototype.EIBGetGroup_Src = function( buf, src, dest) {
 }
 
 EIBConnection.prototype.__EIBGetTPDU_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 37 or this.data.length < 4 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 37 || this.data.length < 4) {
       this.errno = errno.ECONNRESET
       return (-1);
-    if(this.ptr5 != None {
+    if(this.ptr5 != null) {
       this.ptr5.data = (((this.data[2])<<8)|(this.data[2+1]))
-    this.buf.buffer = this.data[4:]
+    this.buf.buffer = this.data.slice(4)
     return this.buf.buffer.length
 
 
@@ -146,9 +145,9 @@ EIBConnection.prototype.EIBGetTPDU = function( buf, src) {
 }
 
 EIBConnection.prototype.__EIB_Cache_Clear_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 114 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 114 || this.data.length < 2) {
       this.errno = errno.ECONNRESET
       return (-1);
     return 0
@@ -176,9 +175,9 @@ EIBConnection.prototype.EIB_Cache_Clear = function() {
 }
 
 EIBConnection.prototype.__EIB_Cache_Disable_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 113 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 113 || this.data.length < 2) {
       this.errno = errno.ECONNRESET
       return (-1);
     return 0
@@ -206,13 +205,13 @@ EIBConnection.prototype.EIB_Cache_Disable = function() {
 }
 
 EIBConnection.prototype.__EIB_Cache_Enable_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
     if((((this.data[0])<<8)|(this.data[0+1])) != 1) {
       this.errno = 'EBUSY';
       return (-1)
     }
-    if((((this.data[0])<<8)|(this.data[0+1])) != 112 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 112 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
     return 0
@@ -240,20 +239,20 @@ EIBConnection.prototype.EIB_Cache_Enable = function() {
 }
 
 EIBConnection.prototype.__EIB_Cache_Read_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 117 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 117 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
-    if((((this.data[4])<<8)|(this.data[4+1])) == 0 {
+    if((((this.data[4])<<8)|(this.data[4+1])) == 0) {
       this.errno = 'ENODEV';
       return (-1);
-    if this.data.length <= 6 {
+    if (this.data.length <= 6) {
       this.errno = 'ENOENT';
       return (-1);
-    if(this.ptr5 != None {
+    if(this.ptr5 != null) {
       this.ptr5.data = (((this.data[2])<<8)|(this.data[2+1]))
-    this.buf.buffer = this.data[6:]
+    this.buf.buffer = this.data.slice(6)
     return this.buf.buffer.length
 
 
@@ -283,20 +282,20 @@ EIBConnection.prototype.EIB_Cache_Read = function( dst, src, buf) {
 }
 
 EIBConnection.prototype.__EIB_Cache_Read_Sync_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 116 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 116 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
-    if((((this.data[4])<<8)|(this.data[4+1])) == 0 {
+    if((((this.data[4])<<8)|(this.data[4+1])) == 0) {
       this.errno = 'ENODEV';
       return (-1);
-    if this.data.length <= 6 {
+    if (this.data.length <= 6) {
       this.errno = 'ENOENT';
       return (-1);
-    if(this.ptr5 != None {
+    if(this.ptr5 != null) {
       this.ptr5.data = (((this.data[2])<<8)|(this.data[2+1]))
-    this.buf.buffer = this.data[6:]
+    this.buf.buffer = this.data.slice(6)
     return this.buf.buffer.length
 
 
@@ -328,9 +327,9 @@ EIBConnection.prototype.EIB_Cache_Read_Sync = function( dst, src, buf, age) {
 }
 
 EIBConnection.prototype.__EIB_Cache_Remove_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 115 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 115 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
     return 0
@@ -360,14 +359,14 @@ EIBConnection.prototype.EIB_Cache_Remove = function( dest) {
 }
 
 EIBConnection.prototype.__EIB_Cache_LastUpdates_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 118 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 118 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
-    if(this.ptr4 != None {
+    if(this.ptr4 != null) {
       this.ptr4.data = (((this.data[2])<<8)|(this.data[2+1]))
-    this.buf.buffer = this.data[4:]
+    this.buf.buffer = this.data.slice(4)
     return this.buf.buffer.length
 
 
@@ -398,9 +397,9 @@ EIBConnection.prototype.EIB_Cache_LastUpdates = function( start, timeout, buf, e
 }
 
 EIBConnection.prototype.__EIB_LoadImage_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 99 or this.data.length < 4 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 99 || this.data.length < 4 ) {
       this.errno = errno.ECONNRESET
       return (-1);
     return (((this.data[2])<<8)|(this.data[2+1]))
@@ -410,66 +409,56 @@ EIBConnection.prototype.__EIB_LoadImage_Complete = function() {
 
 EIBConnection.prototype.EIB_LoadImage_async = function( image) {
     ibuf = [0] * 2;
-    if image.length < 0 {
+    if (image.length < 0) {
       this.errno = errno.EINVAL
       return (-1);
-    this.sendlen = image.length
-    ibuf += image
-    ibuf[0] = 0
-    ibuf[1] = 99
-    if(this.__EIB_SendRequest(ibuf) == -1) {
-      return (-1);;
-    this.__complete = this.__EIB_LoadImage_Complete;
-    return 0
-
-
+    }
+    this.sendlen = image.length;
+    ibuf += image;
+    ibuf[0] = 0;
+    ibuf[1] = 99;
+    if(this.__EIB_SendRequest(ibuf) == -1)  return (-1);
+    this.__complete = this.__EIB_LoadImage_Complete();
+    return 0;
 }
 
 EIBConnection.prototype.EIB_LoadImage = function( image) {
-    if(this.EIB_LoadImage_async (image) == -1) {
-      return (-1);
-    return this.EIBComplete ()
-
+    if(this.EIB_LoadImage_async (image) == -1)  return (-1);
+    return this.EIBComplete ();
 }
 
 EIBConnection.prototype.__EIB_MC_Authorize_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 87 or this.data.length < 3 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 87 || this.data.length < 3 ) {
       this.errno = errno.ECONNRESET
       return (-1);
-    return this.data[2]
-
-
+    }
+    return this.data[2];
 }
 
 EIBConnection.prototype.EIB_MC_Authorize_async = function( key) {
     ibuf = [0] * 6;
-    if key.length != 4 {
+    if (key.length != 4) {
       this.errno = errno.EINVAL
       return (-1);
-    ibuf[2:6] = key
-    ibuf[0] = 0
-    ibuf[1] = 87
-    if(this.__EIB_SendRequest(ibuf) == -1) {
-      return (-1);;
+    for (i = 2; i < 6; i++) ibuf[i] = key[i-2];
+    ibuf[0] = 0;
+    ibuf[1] = 87;
+    if(this.__EIB_SendRequest(ibuf) == -1) return (-1);
     this.__complete = this.__EIB_MC_Authorize_Complete;
-    return 0
-
-
+    return 0;
 }
 
 EIBConnection.prototype.EIB_MC_Authorize = function( key) {
-    if(this.EIB_MC_Authorize_async (key) == -1) {
-      return (-1);
-    return this.EIBComplete ()
-
+    if(this.EIB_MC_Authorize_async (key) == -1) return (-1);
+    return this.EIBComplete();
 }
 
 EIBConnection.prototype.__EIB_MC_Connect_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 80 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 80 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
     return 0
@@ -479,9 +468,9 @@ EIBConnection.prototype.__EIB_MC_Connect_Complete = function() {
 
 EIBConnection.prototype.EIB_MC_Connect_async = function( dest) {
     ibuf = [0] * 4;
-    ibuf[2] = ((dest>>8)&0xff)
-    ibuf[3] = ((dest)&0xff)
-    ibuf[0] = 0
+    ibuf[2] = ((dest>>8)&0xff);
+    ibuf[3] = ((dest)&0xff);
+    ibuf[0] = 0;
     ibuf[1] = 80
     if(this.__EIB_SendRequest(ibuf) == -1) {
       return (-1);;
@@ -499,9 +488,9 @@ EIBConnection.prototype.EIB_MC_Connect = function( dest) {
 }
 
 EIBConnection.prototype.__EIB_MC_Individual_Open_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 73 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 73 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
     return 0
@@ -531,9 +520,9 @@ EIBConnection.prototype.EIB_MC_Individual_Open = function( dest) {
 }
 
 EIBConnection.prototype.__EIB_MC_GetMaskVersion_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 89 or this.data.length < 4 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 89 || this.data.length < 4 ) {
       this.errno = errno.ECONNRESET
       return (-1);
     return (((this.data[2])<<8)|(this.data[2+1]))
@@ -561,9 +550,9 @@ EIBConnection.prototype.EIB_MC_GetMaskVersion = function() {
 }
 
 EIBConnection.prototype.__EIB_MC_GetPEIType_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 85 or this.data.length < 4 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 85 || this.data.length < 4 ) {
       this.errno = errno.ECONNRESET
       return (-1);
     return (((this.data[2])<<8)|(this.data[2+1]))
@@ -591,9 +580,9 @@ EIBConnection.prototype.EIB_MC_GetPEIType = function() {
 }
 
 EIBConnection.prototype.__EIB_MC_Progmode_Off_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 96 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 96 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
     return 0
@@ -622,9 +611,9 @@ EIBConnection.prototype.EIB_MC_Progmode_Off = function() {
 }
 
 EIBConnection.prototype.__EIB_MC_Progmode_On_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 96 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 96 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
     return 0
@@ -653,9 +642,9 @@ EIBConnection.prototype.EIB_MC_Progmode_On = function() {
 }
 
 EIBConnection.prototype.__EIB_MC_Progmode_Status_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 96 or this.data.length < 3 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 96 || this.data.length < 3 ) {
       this.errno = errno.ECONNRESET
       return (-1);
     return this.data[2]
@@ -684,9 +673,9 @@ EIBConnection.prototype.EIB_MC_Progmode_Status = function() {
 }
 
 EIBConnection.prototype.__EIB_MC_Progmode_Toggle_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 96 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 96 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
     return 0
@@ -715,16 +704,16 @@ EIBConnection.prototype.EIB_MC_Progmode_Toggle = function() {
 }
 
 EIBConnection.prototype.__EIB_MC_PropertyDesc_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 97 or this.data.length < 6 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 97 || this.data.length < 6 ) {
       this.errno = errno.ECONNRESET
       return (-1);
-    if(this.ptr2 != None {
+    if(this.ptr2 != null) {
       this.ptr2.data = this.data[2]
-    if(this.ptr4 != None {
+    if(this.ptr4 != null) {
       this.ptr4.data = (((this.data[3])<<8)|(this.data[3+1]))
-    if(this.ptr3 != None {
+    if(this.ptr3 != null) {
       this.ptr3.data = this.data[5]
     return 0
 
@@ -756,12 +745,12 @@ EIBConnection.prototype.EIB_MC_PropertyDesc = function( obj, propertyno, proptyp
 }
 
 EIBConnection.prototype.__EIB_MC_PropertyRead_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 83 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 83 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
-    this.buf.buffer = this.data[2:]
+    this.buf.buffer = this.data.slice(2)
     return this.buf.buffer.length
 
 
@@ -793,12 +782,12 @@ EIBConnection.prototype.EIB_MC_PropertyRead = function( obj, propertyno, start, 
 }
 
 EIBConnection.prototype.__EIB_MC_PropertyScan_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 98 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 98 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
-    this.buf.buffer = this.data[2:]
+    this.buf.buffer = this.data.slice(2)
     return this.buf.buffer.length
 
 
@@ -825,12 +814,12 @@ EIBConnection.prototype.EIB_MC_PropertyScan = function( buf) {
 }
 
 EIBConnection.prototype.__EIB_MC_PropertyWrite_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 84 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 84 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
-    this.buf.buffer = this.data[2:]
+    this.buf.buffer = this.data.slice(2)
     return this.buf.buffer.length
 
 
@@ -843,20 +832,18 @@ EIBConnection.prototype.EIB_MC_PropertyWrite_async = function( obj, propertyno, 
     ibuf[4] = ((start>>8)&0xff)
     ibuf[5] = ((start)&0xff)
     ibuf[6] = ((nr_of_elem)&0xff)
-    if buf.length < 0 {
+    if (buf.length < 0) {
       this.errno = errno.EINVAL
-      return (-1);
-    this.sendlen = buf.length
-    ibuf += buf
-    this.buf = res
-    ibuf[0] = 0
-    ibuf[1] = 84
-    if(this.__EIB_SendRequest(ibuf) == -1) {
-      return (-1);;
+      return (-1); 
+    }
+    this.sendlen = buf.length;
+    ibuf += buf;
+    this.buf = res;
+    ibuf[0] = 0;
+    ibuf[1] = 84;
+    if(this.__EIB_SendRequest(ibuf) == -1) return (-1);
     this.__complete = this.__EIB_MC_PropertyWrite_Complete;
     return 0
-
-
 }
 
 EIBConnection.prototype.EIB_MC_PropertyWrite = function( obj, propertyno, start, nr_of_elem, buf, res) {
@@ -867,12 +854,12 @@ EIBConnection.prototype.EIB_MC_PropertyWrite = function( obj, propertyno, start,
 }
 
 EIBConnection.prototype.__EIB_MC_ReadADC_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 86 or this.data.length < 4 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 86 || this.data.length < 4 ) {
       this.errno = errno.ECONNRESET
       return (-1);
-    if(this.ptr1 != None {
+    if(this.ptr1 != null) {
       this.ptr1.data = (((this.data[2])<<8)|(this.data[2+1]))
     return 0
 
@@ -902,12 +889,12 @@ EIBConnection.prototype.EIB_MC_ReadADC = function( channel, count, val) {
 }
 
 EIBConnection.prototype.__EIB_MC_Read_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 81 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 81 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
-    this.buf.buffer = this.data[2:]
+    this.buf.buffer = this.data.slice(2)
     return this.buf.buffer.length
 
 
@@ -938,9 +925,9 @@ EIBConnection.prototype.EIB_MC_Read = function( addr, buf_len, buf) {
 }
 
 EIBConnection.prototype.__EIB_MC_Restart_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 90 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 90 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
     return 0
@@ -968,13 +955,13 @@ EIBConnection.prototype.EIB_MC_Restart = function() {
 }
 
 EIBConnection.prototype.__EIB_MC_SetKey_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
     if((((this.data[0])<<8)|(this.data[0+1])) != 2) {
       this.errno = 'EPERM';
       return (-1)
     }
-    if((((this.data[0])<<8)|(this.data[0+1])) != 88 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 88 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
     return 0
@@ -984,36 +971,33 @@ EIBConnection.prototype.__EIB_MC_SetKey_Complete = function() {
 
 EIBConnection.prototype.EIB_MC_SetKey_async = function( key, level) {
     ibuf = [0] * 7;
-    if key.length != 4 {
+    if (key.length != 4) {
       this.errno = errno.EINVAL
       return (-1);
-    ibuf[2:6] = key
-    ibuf[6] = ((level)&0xff)
-    ibuf[0] = 0
-    ibuf[1] = 88
-    if(this.__EIB_SendRequest(ibuf) == -1) {
-      return (-1);;
+    }
+    for (i = 2; i < 6; i++) ibuf[i] = key[i-2];
+    ibuf[6] = ((level)&0xff);
+    ibuf[0] = 0;
+    ibuf[1] = 88;
+    if(this.__EIB_SendRequest(ibuf) == -1)  return (-1);
     this.__complete = this.__EIB_MC_SetKey_Complete;
-    return 0
-
-
+    return 0;
 }
 
 EIBConnection.prototype.EIB_MC_SetKey = function( key, level) {
-    if(this.EIB_MC_SetKey_async (key, level) == -1) {
-      return (-1);
+    if(this.EIB_MC_SetKey_async (key, level) == -1)    return (-1);
     return this.EIBComplete ()
 
 }
 
 EIBConnection.prototype.__EIB_MC_Write_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
     if((((this.data[0])<<8)|(this.data[0+1])) != 68) {
       this.errno = 'EIO';
       return (-1)
     }
-    if((((this.data[0])<<8)|(this.data[0+1])) != 82 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 82 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
     return this.sendlen
@@ -1023,80 +1007,71 @@ EIBConnection.prototype.__EIB_MC_Write_Complete = function() {
 
 EIBConnection.prototype.EIB_MC_Write_async = function( addr, buf) {
     ibuf = [0] * 6;
-    ibuf[2] = ((addr>>8)&0xff)
-    ibuf[3] = ((addr)&0xff)
-    ibuf[4] = (((buf))>>8)&0xff.length
-    ibuf[5] = (((buf)))&0xff.length
-    if buf.length < 0 {
+    ibuf[2] = ((addr>>8)&0xff);
+    ibuf[3] = ((addr)&0xff);
+    ibuf[4] = (((buf))>>8)&0xff.length;
+    ibuf[5] = (((buf)))&0xff.length;
+    if (buf.length < 0) {
       this.errno = errno.EINVAL
       return (-1);
-    this.sendlen = buf.length
-    ibuf += buf
-    ibuf[0] = 0
-    ibuf[1] = 82
-    if(this.__EIB_SendRequest(ibuf) == -1) {
-      return (-1);;
+    }
+    this.sendlen = buf.length;
+    ibuf += buf;
+    ibuf[0] = 0;
+    ibuf[1] = 82;
+    if(this.__EIB_SendRequest(ibuf) == -1)  return (-1);
     this.__complete = this.__EIB_MC_Write_Complete;
-    return 0
-
-
+    return 0;
 }
 
 EIBConnection.prototype.EIB_MC_Write = function( addr, buf) {
-    if(this.EIB_MC_Write_async (addr, buf) == -1) {
-      return (-1);
+    if(this.EIB_MC_Write_async (addr, buf) == -1)  return (-1);
     return this.EIBComplete ()
 
 }
 
 EIBConnection.prototype.__EIB_MC_Write_Plain_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 91 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 91 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
+    }
     return this.sendlen
-
-
 }
 
 EIBConnection.prototype.EIB_MC_Write_Plain_async = function( addr, buf) {
     ibuf = [0] * 6;
-    ibuf[2] = ((addr>>8)&0xff)
-    ibuf[3] = ((addr)&0xff)
-    ibuf[4] = (((buf))>>8)&0xff.length
-    ibuf[5] = (((buf)))&0xff.length
-    if buf.length < 0 {
-      this.errno = errno.EINVAL
+    ibuf[2] = ((addr>>8)&0xff);
+    ibuf[3] = ((addr)&0xff);
+    ibuf[4] = (((buf))>>8)&0xff.length;
+    ibuf[5] = (((buf)))&0xff.length;
+    if (buf.length < 0) {
+      this.errno = errno.EINVAL;
       return (-1);
-    this.sendlen = buf.length
-    ibuf += buf
-    ibuf[0] = 0
-    ibuf[1] = 91
-    if(this.__EIB_SendRequest(ibuf) == -1) {
-      return (-1);;
+    }
+    this.sendlen = buf.length;
+    ibuf += buf;
+    ibuf[0] = 0;
+    ibuf[1] = 91;
+    if(this.__EIB_SendRequest(ibuf) == -1) return (-1);
     this.__complete = this.__EIB_MC_Write_Plain_Complete;
-    return 0
-
-
+    return 0;
 }
 
 EIBConnection.prototype.EIB_MC_Write_Plain = function( addr, buf) {
-    if(this.EIB_MC_Write_Plain_async (addr, buf) == -1) {
-      return (-1);
-    return this.EIBComplete ()
-
+    if(this.EIB_MC_Write_Plain_async (addr, buf) == -1) return (-1);
+    return this.EIBComplete ();
 }
 
 EIBConnection.prototype.__EIB_M_GetMaskVersion_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 49 or this.data.length < 4 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 49 || this.data.length < 4 ) {
       this.errno = errno.ECONNRESET
       return (-1);
-    return (((this.data[2])<<8)|(this.data[2+1]))
-
-
+    }
+    return (((this.data[2])<<8)|(this.data[2+1]));
 }
 
 EIBConnection.prototype.EIB_M_GetMaskVersion_async = function( dest) {
@@ -1105,30 +1080,24 @@ EIBConnection.prototype.EIB_M_GetMaskVersion_async = function( dest) {
     ibuf[3] = ((dest)&0xff)
     ibuf[0] = 0
     ibuf[1] = 49
-    if(this.__EIB_SendRequest(ibuf) == -1) {
-      return (-1);;
+    if(this.__EIB_SendRequest(ibuf) == -1) return (-1);;
     this.__complete = this.__EIB_M_GetMaskVersion_Complete;
     return 0
-
-
 }
 
 EIBConnection.prototype.EIB_M_GetMaskVersion = function( dest) {
-    if(this.EIB_M_GetMaskVersion_async (dest) == -1) {
-      return (-1);
+    if(this.EIB_M_GetMaskVersion_async (dest) == -1) return (-1);
     return this.EIBComplete ()
-
 }
 
 EIBConnection.prototype.__EIB_M_Progmode_Off_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 48 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 48 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
+    }
     return 0
-
-
 }
 
 EIBConnection.prototype.EIB_M_Progmode_Off_async = function( dest) {
@@ -1138,30 +1107,24 @@ EIBConnection.prototype.EIB_M_Progmode_Off_async = function( dest) {
     ibuf[4] = ((0)&0xff)
     ibuf[0] = 0
     ibuf[1] = 48
-    if(this.__EIB_SendRequest(ibuf) == -1) {
-      return (-1);;
+    if(this.__EIB_SendRequest(ibuf) == -1) return (-1);
     this.__complete = this.__EIB_M_Progmode_Off_Complete;
     return 0
-
-
 }
 
 EIBConnection.prototype.EIB_M_Progmode_Off = function( dest) {
-    if(this.EIB_M_Progmode_Off_async (dest) == -1) {
-      return (-1);
+    if(this.EIB_M_Progmode_Off_async (dest) == -1) return (-1);
     return this.EIBComplete ()
-
 }
 
 EIBConnection.prototype.__EIB_M_Progmode_On_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 48 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 48 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
-    return 0
-
-
+    }
+    return 0;
 }
 
 EIBConnection.prototype.EIB_M_Progmode_On_async = function( dest) {
@@ -1171,8 +1134,7 @@ EIBConnection.prototype.EIB_M_Progmode_On_async = function( dest) {
     ibuf[4] = ((1)&0xff)
     ibuf[0] = 0
     ibuf[1] = 48
-    if(this.__EIB_SendRequest(ibuf) == -1) {
-      return (-1);;
+    if(this.__EIB_SendRequest(ibuf) == -1)  return (-1);;
     this.__complete = this.__EIB_M_Progmode_On_Complete;
     return 0
 
@@ -1180,21 +1142,19 @@ EIBConnection.prototype.EIB_M_Progmode_On_async = function( dest) {
 }
 
 EIBConnection.prototype.EIB_M_Progmode_On = function( dest) {
-    if(this.EIB_M_Progmode_On_async (dest) == -1) {
-      return (-1);
+    if(this.EIB_M_Progmode_On_async (dest) == -1) return (-1);
     return this.EIBComplete ()
 
 }
 
 EIBConnection.prototype.__EIB_M_Progmode_Status_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 48 or this.data.length < 3 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 48 || this.data.length < 3 ) {
       this.errno = errno.ECONNRESET
       return (-1);
-    return this.data[2]
-
-
+    }
+    return this.data[2];
 }
 
 EIBConnection.prototype.EIB_M_Progmode_Status_async = function( dest) {
@@ -1204,30 +1164,24 @@ EIBConnection.prototype.EIB_M_Progmode_Status_async = function( dest) {
     ibuf[4] = ((3)&0xff)
     ibuf[0] = 0
     ibuf[1] = 48
-    if(this.__EIB_SendRequest(ibuf) == -1) {
-      return (-1);;
+    if(this.__EIB_SendRequest(ibuf) == -1) return (-1);;
     this.__complete = this.__EIB_M_Progmode_Status_Complete;
     return 0
-
-
 }
 
 EIBConnection.prototype.EIB_M_Progmode_Status = function( dest) {
-    if(this.EIB_M_Progmode_Status_async (dest) == -1) {
-      return (-1);
+    if(this.EIB_M_Progmode_Status_async (dest) == -1) return (-1);
     return this.EIBComplete ()
-
 }
 
 EIBConnection.prototype.__EIB_M_Progmode_Toggle_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 48 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 48 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
+    }
     return 0
-
-
 }
 
 EIBConnection.prototype.EIB_M_Progmode_Toggle_async = function( dest) {
@@ -1237,12 +1191,9 @@ EIBConnection.prototype.EIB_M_Progmode_Toggle_async = function( dest) {
     ibuf[4] = ((2)&0xff)
     ibuf[0] = 0
     ibuf[1] = 48
-    if(this.__EIB_SendRequest(ibuf) == -1) {
-      return (-1);;
+    if(this.__EIB_SendRequest(ibuf) == -1) return (-1);;
     this.__complete = this.__EIB_M_Progmode_Toggle_Complete;
     return 0
-
-
 }
 
 EIBConnection.prototype.EIB_M_Progmode_Toggle = function( dest) {
@@ -1253,15 +1204,14 @@ EIBConnection.prototype.EIB_M_Progmode_Toggle = function( dest) {
 }
 
 EIBConnection.prototype.__EIB_M_ReadIndividualAddresses_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 50 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 50 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
-    this.buf.buffer = this.data[2:]
-    return this.buf.buffer.length
-
-
+    }
+    this.buf.buffer = this.data.slice(2);
+    return this.buf.buffer.length;
 }
 
 EIBConnection.prototype.EIB_M_ReadIndividualAddresses_async = function( buf) {
@@ -1285,7 +1235,7 @@ EIBConnection.prototype.EIB_M_ReadIndividualAddresses = function( buf) {
 }
 
 EIBConnection.prototype.__EIB_M_WriteIndividualAddress_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
     if((((this.data[0])<<8)|(this.data[0+1])) != 65) {
       this.errno = 'EADDRINUSE';
@@ -1299,7 +1249,7 @@ EIBConnection.prototype.__EIB_M_WriteIndividualAddress_Complete = function() {
       this.errno = 'EADDRNOTAVAIL';
       return (-1)
     }
-    if((((this.data[0])<<8)|(this.data[0+1])) != 64 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 64 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
     return 0
@@ -1329,13 +1279,13 @@ EIBConnection.prototype.EIB_M_WriteIndividualAddress = function( dest) {
 }
 
 EIBConnection.prototype.__EIBOpenBusmonitor_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
     if((((this.data[0])<<8)|(this.data[0+1])) != 1) {
       this.errno = 'EBUSY';
       return (-1)
     }
-    if((((this.data[0])<<8)|(this.data[0+1])) != 16 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 16 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
     return 0
@@ -1363,13 +1313,13 @@ EIBConnection.prototype.EIBOpenBusmonitor = function() {
 }
 
 EIBConnection.prototype.__EIBOpenBusmonitorText_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
     if((((this.data[0])<<8)|(this.data[0+1])) != 1) {
       this.errno = 'EBUSY';
       return (-1)
     }
-    if((((this.data[0])<<8)|(this.data[0+1])) != 17 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 17 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
     return 0
@@ -1397,9 +1347,9 @@ EIBConnection.prototype.EIBOpenBusmonitorText = function() {
 }
 
 EIBConnection.prototype.__EIBOpen_GroupSocket_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 38 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 38 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
     return 0
@@ -1431,9 +1381,9 @@ EIBConnection.prototype.EIBOpen_GroupSocket = function( write_only) {
 }
 
 EIBConnection.prototype.__EIBOpenT_Broadcast_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 35 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 35 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
     return 0
@@ -1465,9 +1415,9 @@ EIBConnection.prototype.EIBOpenT_Broadcast = function( write_only) {
 }
 
 EIBConnection.prototype.__EIBOpenT_Connection_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 32 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 32 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
     return 0
@@ -1497,9 +1447,9 @@ EIBConnection.prototype.EIBOpenT_Connection = function( dest) {
 }
 
 EIBConnection.prototype.__EIBOpenT_Group_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 34 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 34 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
     return 0
@@ -1533,9 +1483,9 @@ EIBConnection.prototype.EIBOpenT_Group = function( dest, write_only) {
 }
 
 EIBConnection.prototype.__EIBOpenT_Individual_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 33 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 33 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
     return 0
@@ -1569,9 +1519,9 @@ EIBConnection.prototype.EIBOpenT_Individual = function( dest, write_only) {
 }
 
 EIBConnection.prototype.__EIBOpenT_TPDU_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 36 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 36 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
     return 0
@@ -1601,13 +1551,13 @@ EIBConnection.prototype.EIBOpenT_TPDU = function( src) {
 }
 
 EIBConnection.prototype.__EIBOpenVBusmonitor_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
     if((((this.data[0])<<8)|(this.data[0+1])) != 1) {
       this.errno = 'EBUSY';
       return (-1)
     }
-    if((((this.data[0])<<8)|(this.data[0+1])) != 18 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 18 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
     return 0
@@ -1635,13 +1585,13 @@ EIBConnection.prototype.EIBOpenVBusmonitor = function() {
 }
 
 EIBConnection.prototype.__EIBOpenVBusmonitorText_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
     if((((this.data[0])<<8)|(this.data[0+1])) != 1) {
       this.errno = 'EBUSY';
       return (-1)
     }
-    if((((this.data[0])<<8)|(this.data[0+1])) != 19 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 19 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
     return 0
@@ -1669,9 +1619,9 @@ EIBConnection.prototype.EIBOpenVBusmonitorText = function() {
 }
 
 EIBConnection.prototype.__EIBReset_Complete = function() {
-    this.__complete = None;
+    this.__complete = null;
     if (this.__EIB_GetRequest() == -1) return(-1);
-    if((((this.data[0])<<8)|(this.data[0+1])) != 4 or this.data.length < 2 {
+    if((((this.data[0])<<8)|(this.data[0+1])) != 4 || this.data.length < 2 ) {
       this.errno = errno.ECONNRESET
       return (-1);
     return 0
@@ -1700,7 +1650,7 @@ EIBConnection.prototype.EIBReset = function() {
 
 EIBConnection.prototype.EIBSendAPDU = function( data) {
     ibuf = [0] * 2;
-    if data.length < 2 {
+    if (data.length < 2) { 
       this.errno = errno.EINVAL
       return (-1);
     this.sendlen = data.length
@@ -1718,7 +1668,7 @@ EIBConnection.prototype.EIBSendGroup = function( dest, data) {
     ibuf = [0] * 4;
     ibuf[2] = ((dest>>8)&0xff)
     ibuf[3] = ((dest)&0xff)
-    if data.length < 2 {
+    if (data.length < 2) { 
       this.errno = errno.EINVAL
       return (-1);
     this.sendlen = data.length
@@ -1736,7 +1686,7 @@ EIBConnection.prototype.EIBSendTPDU = function( dest, data) {
     ibuf = [0] * 4;
     ibuf[2] = ((dest>>8)&0xff)
     ibuf[3] = ((dest)&0xff)
-    if data.length < 2 {
+    if (data.length < 2) { 
       this.errno = errno.EINVAL
       return (-1);
     this.sendlen = data.length
@@ -1748,3 +1698,4 @@ EIBConnection.prototype.EIBSendTPDU = function( dest, data) {
     return this.sendlen
 
 
+}
