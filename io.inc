@@ -60,123 +60,118 @@ function EIBConnection() {
 }
 
 EIBConnection.prototype.EIBSocketLocal = function(path) {
-    if (this.fd != null) {
+    if (this.fd !== null) {
       this.errno = errno.EUSERS;
-      return -1
+      return(-1);
     }
-    fd = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-    fd.connect(path)
-    this.data = []
-    this.readlen = 0
-    this.fd = fd
-    return 0
-}
+    fd = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM);  // TODO: node.js sockets
+    fd.connect(path);
+    this.data = [];
+    this.readlen = 0;
+    this.fd = fd;
+    return(0);
+};
 
-EIBConnection.prototype.EIBSocketRemote = function(host, port = 6720) {
-    if (this.fd != null) {
-      this.errno = errno.EUSERS
-      return -1
-    fd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    fd.connect((host, port))
-    this.data = []
-    this.readlen = 0
-    this.fd = fd
-    return 0
-
-}
+EIBConnection.prototype.EIBSocketRemote = function(host, port) {
+    if (this.fd !== null) {
+      this.errno = 'errno.EUSERS';
+      return (-1);
+    }
+    fd = socket.socket(socket.AF_INET, socket.SOCK_STREAM); // TODO: node.js sockets
+    fd.connect(host, port || 6720);
+    this.data = [];
+    this.readlen = 0;
+    this.fd = fd;
+    return(0);
+};
 
 EIBConnection.prototype.EIBSocketURL = function(url) {
-    if (url.slice(0,6) == 'local:') {
-      return this.EIBSocketLocal(url.slice(6))
-    if (url.slice(0,3) == 'ip:') {
-      parts=url.split(':')
-      if (parts.length == 2) {
-        parts.append(6720)
-      return this.EIBSocketRemote(parts[1], int(parts[2]))
-    this.errno = errno.EINVAL
-    return -1
-
-}
+    if (url.slice(0,6) == 'local:') 
+		return this.EIBSocketLocal(url.slice(6));
+    if (url.slice(0,3) == 'ip:')
+      	parts = url.split(':');
+    if (parts.length == 2) {
+      	parts.append(6720);
+      	return this.EIBSocketRemote(parts[1], parts[2]);  // TODO: node.js sockets
+    }
+    this.errno = 'errno.EINVAL';
+    return(-1);
+};
 
 EIBConnection.prototype.EIBComplete = function() {
-    if (this.__complete == null) {
-      this.errno = errno.EINVAL
-      return -1
+    if (this.__complete === null) {
+      this.errno = 'errno.EINVAL';
+      return(-1);
     }
-    return this.__complete()
-
-}
+    return this.__complete();
+};
 
 EIBConnection.prototype.EIBClose = function() {
-    if (this.fd == null) {
-      this.errno = errno.EINVAL
-      return -1
-    this.fd.close()
-    this.fd = null
-
-}
+    if (this.fd === null) {
+      this.errno = 'errno.EINVAL';
+      return(-1);
+    }
+    this.fd.close();
+    this.fd = null;
+};
 
 EIBConnection.prototype.EIBClose_sync = function() {
-    this.EIBReset()
-    return this.EIBClose()
-
-}
+    this.EIBReset();
+    return this.EIBClose();
+};
 
 EIBConnection.prototype.__EIB_SendRequest = function(data) {
-    if (this.fd == null) {
-      this.errno = errno.ECONNRESET
-      return -1
+    if (this.fd === null) {
+      this.errno = 'errno.ECONNRESET';
+      return(-1);
+	}
     if (data.length < 2 || data.length > 0xffff) {
-      this.errno = errno.EINVAL
-      return -1
+      this.errno = 'errno.EINVAL';
+      return(-1);
+    }
     data = [ (data.length>>8)&0xff, (data.length)&0xff ] + data;
-    result = '';
-    for (i in data)       result += chr(i);
-    this.fd.send(result);
-    return 0;
-
-}
+    this.fd.send(data); // TODO: replace with node.js sockets;
+    return(0);
+};
 
 EIBConnection.prototype.EIB_Poll_FD = function() {
-    if (this.fd == null) {
-      this.errno = errno.EINVAL
-      return -1
+    if (this.fd === null) {
+      this.errno = 'errno.EINVAL';
+      return(-1);
     }
     return this.fd;
-}
+};
 
 EIBConnection.prototype.EIB_Poll_Complete = function() {
-    if (this.__EIB_CheckRequest(False) == -1)  return -1;
+    if (this.__EIB_CheckRequest(false) == -1)  return(-1);
     if (this.readlen < 2 || (this.readlen >= 2 & this.readlen < this.datalen + 2)) return 0;
     return 1;
-}
+};
 
 EIBConnection.prototype.__EIB_GetRequest = function() {
     while (true) {
-      if (this.__EIB_CheckRequest(true) == -1) {
-        return -1
-	  }
+      if (this.__EIB_CheckRequest(true) == -1) return(-1);
       if ((this.readlen >= 2) && (this.readlen >= this.datalen + 2)) {
         this.readlen = 0;
         return 0;
       }
     }
-}
+};
 
 EIBConnection.prototype.__EIB_CheckRequest = function(block) {
-    if (this.fd == null) {
-      this.errno = errno.ECONNRESET;
+    if (this.fd === null) {
+      this.errno = 'errno.ECONNRESET';
       return -1;
     }
-    if (this.readlen == 0) {
+    if (this.readlen === 0) {
       this.head = [];
       this.data = [];
     }
     if (this.readlen < 2) {
       this.fd.setblocking(block);
-      result = this.fd.recv (2-this.readlen);
-      for (a in result)         this.head.append(ord(a))
-      this.readlen += result.length
+      var result = this.fd.recv (2-this.readlen);
+      this.head.push(result);
+      this.readlen += result.length;
     }
     if (this.readlen < 2) {
       return 0;
@@ -184,9 +179,9 @@ EIBConnection.prototype.__EIB_CheckRequest = function(block) {
     this.datalen = ((this.head[0] << 8) | this.head[1]);
     if (this.readlen < this.datalen + 2) {
       this.fd.setblocking(block);
-      result = this.fd.recv (this.datalen + 2 -this.readlen);
-      for (a in result)         this.data.append(ord(a));
-      this.readlen += result.length;
+      var result2 = this.fd.recv (this.datalen + 2 -this.readlen);
+      this.data.push(result2);
+      this.readlen += result2.length;
     }
     return 0;
-}
+};
