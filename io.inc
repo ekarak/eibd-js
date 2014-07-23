@@ -30,8 +30,14 @@
 //import errno;
 //import socket;
 
+var parser = require('./parser'),
+    tools = require('./tools'),
+    net = require('net'),
+    events = require('events'),
+    sys = require('sys');
+
 function EIBBuffer(buf) {
-    this.buffer = buf || [];
+    this.buffer = buf || new Buffer([]);
 }
 
 function EIBAddr(value) {
@@ -51,37 +57,42 @@ function EIBInt32(value) {
 }
 
 function EIBConnection() {
-    this.data = [];
+	//
+    events.EventEmitter.call(this);
+	//
+    this.data = new Buffer([]);
     this.readlen = 0;
     this.datalen = 0;
-    this.fd = null;
+    this.socket = null;
     this.errno = 0;
     this.__complete = null;
 }
 
 EIBConnection.prototype.EIBSocketLocal = function(path) {
-    if (this.fd !== null) {
+    if (this.socket !== null) {
       this.errno = errno.EUSERS;
       return(-1);
     }
-    fd = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM);  // TODO: node.js sockets
-    fd.connect(path);
-    this.data = [];
+	this.socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM);  // TODO: node.js UNIX sockets??
+    this.socket.connect(path);
+    this.data = new Buffer([]);
     this.readlen = 0;
-    this.fd = fd;
     return(0);
 };
 
 EIBConnection.prototype.EIBSocketRemote = function(host, port) {
-    if (this.fd !== null) {
+    if (this.socket !== null) {
       this.errno = 'errno.EUSERS';
       return (-1);
     }
-    fd = socket.socket(socket.AF_INET, socket.SOCK_STREAM); // TODO: node.js sockets
-    fd.connect(host, port || 6720);
-    this.data = [];
+	this.socket = net.connect({host: host, port: port || 6720}, function(msg) {
+		console.log("EIBSocketRemote.connect: "+msg);
+    });
+	this.socket.on('error', function(msg) { 
+		new Error('EIBSocketRemote.connect error:'+msg);
+	});
+    this.data = new Buffer([]);
     this.readlen = 0;
-    this.fd = fd;
     return(0);
 };
 
@@ -92,7 +103,7 @@ EIBConnection.prototype.EIBSocketURL = function(url) {
       	parts = url.split(':');
     if (parts.length == 2) {
       	parts.append(6720);
-      	return this.EIBSocketRemote(parts[1], parts[2]);  // TODO: node.js sockets
+      	return this.EIBSocketRemote(parts[1], parts[2]);
     }
     this.errno = 'errno.EINVAL';
     return(-1);
@@ -107,12 +118,12 @@ EIBConnection.prototype.EIBComplete = function() {
 };
 
 EIBConnection.prototype.EIBClose = function() {
-    if (this.fd === null) {
+    if (this.socket === null) {
       this.errno = 'errno.EINVAL';
       return(-1);
     }
-    this.fd.close();
-    this.fd = null;
+    this.socket.end();
+    this.socket = null;
 };
 
 EIBConnection.prototype.EIBClose_sync = function() {
@@ -121,7 +132,7 @@ EIBConnection.prototype.EIBClose_sync = function() {
 };
 
 EIBConnection.prototype.__EIB_SendRequest = function(data) {
-    if (this.fd === null) {
+    if (this.socket === null) {
       this.errno = 'errno.ECONNRESET';
       return(-1);
 	}
@@ -130,16 +141,18 @@ EIBConnection.prototype.__EIB_SendRequest = function(data) {
       return(-1);
     }
     data = [ (data.length>>8)&0xff, (data.length)&0xff ] + data;
-    this.fd.send(data); // TODO: replace with node.js sockets;
+    this.socket.write(data, function(msg) {
+		
+	}); 
     return(0);
 };
 
 EIBConnection.prototype.EIB_Poll_FD = function() {
-    if (this.fd === null) {
+    if (this.socket === null) {
       this.errno = 'errno.EINVAL';
       return(-1);
     }
-    return this.fd;
+    return this.socket;
 };
 
 EIBConnection.prototype.EIB_Poll_Complete = function() {
@@ -159,17 +172,17 @@ EIBConnection.prototype.__EIB_GetRequest = function() {
 };
 
 EIBConnection.prototype.__EIB_CheckRequest = function(block) {
-    if (this.fd === null) {
+    if (this.socket === null) {
       this.errno = 'errno.ECONNRESET';
       return -1;
     }
     if (this.readlen === 0) {
-      this.head = [];
-      this.data = [];
+      this.head = new Buffer([]);
+      this.data = new Buffer([]);
     }
     if (this.readlen < 2) {
-      this.fd.setblocking(block);
-      var result = this.fd.recv (2-this.readlen);
+      this.socket.setblocking(block);
+      var result = this.socket.read(2-this.readlen);
       this.head.push(result);
       this.readlen += result.length;
     }
@@ -178,8 +191,8 @@ EIBConnection.prototype.__EIB_CheckRequest = function(block) {
     }
     this.datalen = ((this.head[0] << 8) | this.head[1]);
     if (this.readlen < this.datalen + 2) {
-      this.fd.setblocking(block);
-      var result2 = this.fd.recv (this.datalen + 2 -this.readlen);
+      this.socket.setblocking(block);
+      var result2 = this.socket.read(this.datalen + 2 -this.readlen);
       this.data.push(result2);
       this.readlen += result2.length;
     }
