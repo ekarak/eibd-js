@@ -35,47 +35,47 @@
 #define EIBTYPE (SHORT2INT(0))
 
 #define EIBC_GETREQUEST \
-	printf("    if (this.__EIB_GetRequest() == -1) return(-1);\n");
+	printf("    //try {\n"); \
+	printf("		this.__EIB_GetRequest();\n"); \
+	printf("//	}  catch(e) {\n"); \
+	printf("//		console.log('GetRequest error: '+e);\n"); \
+	printf("//	}\n");
 
 #define EIBC_RETURNERROR(msg, error) \
 	printf("    if(%s !== %d) {\n", EIBTYPE, msg); \
-	printf("      this.errno = '%s';\n", #error); \
-	printf("      return(-1);\n"); \
+	printf("      throw new Error('%s');\n", #error); \
     printf("    }\n");
     
 #define EIBC_RETURNERROR_UINT16(offset, error) \
 	printf("    if(%s === 0) {\n", SHORT2INT (offset)); \
-	printf("      this.errno = '%s';\n", #error); \
-		printf("      return(-1);\n"); \
+	printf("      throw new Error('%s');\n", #error); \
     printf("    }\n");
 
 #define EIBC_RETURNERROR_SIZE(Length, error) \
 	printf("    if (this.data.length <= %d) {\n", Length); \
-	printf("      this.errno = '%s';\n", #error); \
-	printf("      return(-1);\n"); \
+	printf("      throw new Error('%s');\n", #error); \
     printf("    }\n");
 
 #define EIBC_CHECKRESULT(msg, msgsize) \
 	printf("    if((%s !== %d) || (this.data.length < %d)) {\n", EIBTYPE, msg, msgsize); \
-	printf("      this.errno = 'ECONNRESET';\n"); \
-	printf("      return(-1);\n"); \
+	printf("      throw new Error('ECONNRESET');\n"); \
     printf("    }\n");
 
 #define EIBC_RETURN_BUF(offset) \
 	printf("    this.buf.buffer = this.data.slice(%d);\n", offset); \
-	printf("    return(this.buf.buffer.length);\n");
+	printf("    cb(this.buf.buffer.length); return;\n");
 
 #define EIBC_RETURN_OK \
-	printf("    return(0);\n");
+	printf("    cb(0); return;\n");
 
 #define EIBC_RETURN_LEN \
-	printf("    return(this.sendlen);\n");
+	printf("    cb(this.sendlen); return;\n");
 
 #define EIBC_RETURN_UINT8(offset) \
-	printf("    return(this.data.slice(%d));\n", offset);
+	printf("    cb(this.data.slice(%d)); return;\n", offset);
 
 #define EIBC_RETURN_UINT16(offset) \
-	printf("    return(%s);\n", SHORT2INT (offset));
+	printf("    cb(%s); return;\n", SHORT2INT (offset));
 
 #define EIBC_RETURN_PTR1(offset) \
 	printf("    if(this.ptr1 !== null) this.ptr1.data = %s;\n", SHORT2INT (offset));
@@ -99,14 +99,16 @@
 	printf("    if(this.ptr7 !== null) this.ptr7.data = %s;\n", SHORT2LONG (offset));
 
 #define EIBC_COMPLETE(name, body) \
-	printf("EIBConnection.prototype.__%s_Complete = function() {\n", #name); \
+	printf("EIBConnection.prototype.__%s_Complete = function(cb) {\n", #name); \
 	printf("    this.__complete = null;\n"); \
 	body \
 	printf("\n};\n\n");
 
 #define EIBC_INIT_COMPLETE(name) \
-	printf("    this.__complete = this.__%s_Complete();\n", #name); \
-	printf("    return(0);\n");
+	printf("    this.__%s_Complete( function(rc) {\n", #name); \
+	printf("    	this.__complete = rc;\n"); \
+	printf("    	cb(0); return;\n"); \
+	printf("    });\n");
 
 #define EIBC_INIT_SEND(length) \
 	printf("    ibuf = [0] * %d;\n", length);
@@ -116,7 +118,7 @@
 #define EIBC_SEND_BUF_LEN(name, Length) \
 	printf("    if (%s.length < %d) {\n", #name, Length); \
 	printf("      this.errno = 'errno.EINVAL';\n"); \
-	printf("      return(-1);\n"); \
+	printf("      cb(-1); return;\n"); \
     printf("    }\n"); \
 	printf("    this.sendlen = %s.length;\n", #name); \
 	printf("    ibuf += %s;\n", #name);
@@ -126,12 +128,10 @@
 #define EIBC_SEND(msg) \
 	printf("    ibuf[%d] = %d;\n", 0, ((msg>>8)&0xff)); \
 	printf("    ibuf[%d] = %d;\n", 1, ((msg)&0xff)); \
-	printf("    if(this.__EIB_SendRequest(ibuf) == -1)\n"); \
-	printf("      return(-1);\n");
+	printf("    this.__EIB_SendRequest(function(rc) { if (rc == -1) cb(-1); }, ibuf);\n");
 
 #define EIBC_READ_BUF(buffer) \
 	printf("    this.buf = %s;\n", #buffer);
-
 
 #define EIBC_READ_LEN(name) STR(name ## _len)
 
@@ -184,30 +184,33 @@
 #define EIBC_SETKEY(value, offset) \
 	printf("    if (%s.length !== 4) {\n", #value); \
 	printf("      this.errno = errno.EINVAL;\n"); \
-	printf("      return(-1);\n"); \
+	printf("      cb(-1);\n"); \
 	printf("    }\n"); \
 	printf("    Array.prototype.splice.apply(ibuf, [%d, %d+4].concat(%s));\n", offset, offset, #value);
 
 #define EIBC_ASYNC(name, args, body) \
-	printf("EIBConnection.prototype.%s_async = function(", #name); \
-	AL ## args \
+	printf("EIBConnection.prototype.%s_async = function(cb", #name); \
+	KAG ## args \
 	printf(") {\n"); \
+	printf("\tconsole.log('entering %s_async');\n", #name); \
 	body \
 	printf("\n};\n\n"); \
-	printf("EIBConnection.prototype.%s = function(", #name); \
-	AL ## args \
+	printf("EIBConnection.prototype.%s = function(cb", #name); \
+	KAG ## args \
 	printf(") {\n"); \
-	printf ("    if(this.%s_async (", #name); \
-	AL ## args \
-	printf (") == -1) \n"); \
-	printf ("      return(-1);\n"); \
-	printf ("    return(this.EIBComplete());"); \
-	printf("\n};\n\n");
+	printf ("    this.%s_async (cb", #name); \
+	KAG ## args \
+	printf (", function(rc) { \n"); \
+	printf ("	if (rc === -1) { cb(-1); return; }\n"); \
+	printf ("	this.EIBComplete(cb);\n"); \
+	printf ("  });\n"); \
+	printf ("};\n\n");
 
 #define EIBC_SYNC(name, args, body) \
-	printf("EIBConnection.prototype.%s = function(", #name); \
-	AL ## args \
+	printf("EIBConnection.prototype.%s = function(cb", #name); \
+	KAG ## args \
 	printf(") {\n"); \
+	printf("\tconsole.log('entering %s');\n", #name); \
 	body \
 	printf("\n};\n\n");
 
